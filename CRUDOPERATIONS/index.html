@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        #addtask {
+            width: 250px;
+            height: 40px;
+        }
+
+        #btn {
+            height: 45px;
+            background-color: lightsalmon;
+            border: none;
+            border-radius: 2px;
+        }
+
+        #edit {
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        #delete {
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        #dis {
+            display: flex;
+            justify-items: auto;
+        }
+
+        #container {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Add Your Task - CRUD OPERATIONS </h2>
+    <input type="text" placeholder="enter somethin..." id="addtask">
+    <button id="btn">click here </button>
+    <br><br>
+    <div id="container"></div>
+    <script>
+        const btn = document.getElementById("btn");
+        const addtask = document.getElementById("addtask");
+        const container = document.getElementById("container");
+        const allvalues = JSON.parse(localStorage.getItem("allvalues")) || []
+        btn.addEventListener("click", () => {
+            const value = addtask.value.trim()
+            if (value === "") {
+                return alert("add somethin...")
+            }
+            allvalues.push(value)
+            localStorage.setItem("allvalues", JSON.stringify(allvalues));
+            addtask.value = "";
+            displayvalues(allvalues)
+        })
+        function displayvalues(allvalues) {
+            container.innerHTML = ""
+            allvalues.forEach((task, index) => {
+                console.log(`${task}${index}`)
+                const newdiv = document.createElement("div");
+                newdiv.innerHTML = `
+                <center>
+                <div id="dis">
+                <span>${task}</span>
+                <button id="edit">✏️</button>
+                <button id="delete">🗑️</button>
+                </div>
+            </center>
+                `
+                container.append(newdiv)
+                //delete
+                //to delete a single task - use SPLICE
+                //const a =[10,20,30]- to remove last element
+                //a.splice(2,1)=2 refers to index 2 and 1 refers to no of elements to be removed
+                const dltbtn = newdiv.querySelector("#delete")
+                dltbtn.addEventListener("click", () => {
+                    deletetask(index, allvalues);
+                })
+                const editbtn = newdiv.querySelector("#edit")
+                editbtn.addEventListener("click", () => {
+                    editask(index, allvalues);
+                })
+            })
+        }
+        window.addEventListener("DOMContentLoaded", () => {
+            displayvalues(allvalues)
+
+        });
+        function deletetask(index) {
+            let deletevalues = JSON.parse(localStorage.getItem("allvalues"))
+            const ok = confirm("do you want to delete the task ?");
+            if (ok) {
+                deletevalues.splice(index, 1)
+                localStorage.setItem("allvalues", JSON.stringify(deletevalues))
+                displayvalues(deletevalues);
+            }
+        }
+        function editask(index, data) {
+            const currentask = prompt("edit the task", data[index])
+            if (currentask !== null && currentask.trim() !== "") {
+                data[index] = currentask.trim()
+                localStorage.setItem("allvalues", JSON.stringify(data))
+                displayvalues(data)
+            }
+        }
+
+
+    </script>
+</body>
+
+</html>
